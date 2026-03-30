@@ -19,18 +19,6 @@
     <a href="https://www.chess.com/member/i-dio/stats/rapid" target="_blank">Chess</a>
   </div>
 
-  <script>
-    r=Math.random,S=Math.sin,p=[];
-    for(i=12;i--;) {
-      d=document.body.appendChild(document.createElement('div'));
-      d.className='p';
-      d.innerText='♟♞♝♜♛♚'[r()*6|0];
-      d.sx=.2+r()*.8; d.sy=.2+r()*.8;
-      d.ax=8+r()*15; d.ay=8+r()*15; d.o=r()*6;
-      d.style.cssText=`left:${r()*innerWidth}px;top:${r()*innerHeight}px`;
-      p.push(d);
-    }
-    addEventListener('scroll',()=>{for(i=12;i--;){e=p[i];s=scrollY*i*.01;e.style.transform=`translate(${e.ax*S(s*e.sx+e.o)}px,${e.ay*S(s*e.sy+e.o+1.57)}px)`}});
-  </script>
+  <script src="bg.js"></script>
 </body>
 </html>
