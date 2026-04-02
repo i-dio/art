@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.css">
 <style>
 body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center}
-#board{width:90vw;max-width:400px;margin:20px auto} /* largeur responsive */
+#board{width:90vw;max-width:400px;margin:20px auto}
 a{display:block;margin:10px;color:#fff;text-decoration:none}
 </style>
 </head>
@@ -17,32 +17,31 @@ a{display:block;margin:10px;color:#fff;text-decoration:none}
 <div id="board"></div>
 <a href="index.html">← retour</a>
 
-<!-- Librairies -->
+<!-- jQuery nécessaire pour Chessboard.js v1.0.0 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Chess.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
+<!-- Chessboard.js -->
 <script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.js"></script>
-
 <!-- Fond animé -->
 <script src="bg.js"></script>
 
 <script>
-// S'assurer que le DOM est chargé
-document.addEventListener('DOMContentLoaded', () => {
+$(document).ready(function(){
   var game = new Chess();
   var board = Chessboard('board', {
     draggable: true,
     position: 'start',
-    onDragStart: (source, piece) => {
-      if (game.game_over()) return false;
-      if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-          (game.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
+    onDragStart: function(source, piece){
+      if(game.game_over()) return false;
+      if((game.turn()==='w' && piece.search(/^b/)!==-1) ||
+         (game.turn()==='b' && piece.search(/^w/)!==-1)) return false;
     },
-    onDrop: (source, target) => {
-      var move = game.move({from: source, to: target, promotion: 'q'});
-      if (move === null) return 'snapback';
+    onDrop: function(source, target){
+      var move = game.move({from: source, to: target, promotion:'q'});
+      if(move === null) return 'snapback';
     },
-    onSnapEnd: () => {
-      board.position(game.fen());
-    }
+    onSnapEnd: function(){ board.position(game.fen()); }
   });
 });
 </script>
