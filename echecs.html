@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="lib/chessboard.css">
+<style>
+#board { width: 90vw; max-width: 480px; margin:20px auto; }
+body { text-align:center; }
+</style>
 </head>
 <body>
-  <h1>ÉCHECS</h1>
-  <a href="index.html">← retour</a>
-  <p>Stats, objectifs, etc</p>
-  <script src="bg.js"></script>
+<h1>ÉCHECS</h1>
+<a href="index.html">← retour</a>
+<div id="board"></div>
+
+<script src="lib/chess.js"></script>
+<script src="lib/chessboard.js"></script>
+<script src="bg.js"></script> <!-- Background animé -->
+
+<script>
+// initialisation moteur d'échecs
+var game = new Chess();
+
+// échiquier interactif
+var board = Chessboard('board', {
+  draggable: true,
+  position: 'start',
+  onDrop: function(source, target) {
+    var move = game.move({from: source, to: target, promotion: 'q'});
+    if (move === null) return 'snapback'; // mouvement illégal
+  }
+});
+</script>
 </body>
 </html>
