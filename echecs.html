@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>i-dio - Échecs</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.css">
 <style>
 body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center}
-#board{width:90vw;max-width:400px;margin:20px auto}
+#board{display:grid;grid-template:repeat(8,50px)/repeat(8,50px);margin:20px auto;max-width:90vw}
+.square{width:50px;height:50px;display:flex;justify-content:center;align-items:center;font-size:2em;cursor:pointer}
+.white{background:#eee;color:#000}
+.black{background:#666;color:#fff}
 a{display:block;margin:10px;color:#fff;text-decoration:none}
 </style>
 </head>
@@ -17,33 +18,68 @@ a{display:block;margin:10px;color:#fff;text-decoration:none}
 <div id="board"></div>
 <a href="index.html">← retour</a>
 
-<!-- jQuery nécessaire pour Chessboard.js v1.0.0 -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Chess.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
-<!-- Chessboard.js -->
-<script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.js"></script>
-<!-- Fond animé -->
-<script src="bg.js"></script>
-
 <script>
-$(document).ready(function(){
-  var game = new Chess();
-  var board = Chessboard('board', {
-    draggable: true,
-    position: 'start',
-    onDragStart: function(source, piece){
-      if(game.game_over()) return false;
-      if((game.turn()==='w' && piece.search(/^b/)!==-1) ||
-         (game.turn()==='b' && piece.search(/^w/)!==-1)) return false;
-    },
-    onDrop: function(source, target){
-      var move = game.move({from: source, to: target, promotion:'q'});
-      if(move === null) return 'snapback';
-    },
-    onSnapEnd: function(){ board.position(game.fen()); }
-  });
-});
+// initialisation
+const board = document.getElementById('board');
+let selected=null;
+const squares=[];
+
+// configuration initiale
+const startPos = [
+['♜','♞','♝','♛','♚','♝','♞','♜'],
+['♟','♟','♟','♟','♟','♟','♟','♟'],
+['','','','','','','',''],
+['','','','','','','',''],
+['','','','','','','',''],
+['','','','','','','',''],
+['♙','♙','♙','♙','♙','♙','♙','♙'],
+['♖','♘','♗','♕','♔','♗','♘','♖']
+];
+
+// Création des cases
+for(let y=0;y<8;y++){
+  for(let x=0;x<8;x++){
+    let sq = document.createElement('div');
+    sq.className='square '+((x+y)%2?'black':'white');
+    sq.dataset.x=x; sq.dataset.y=y;
+    sq.innerText = startPos[y][x];
+    board.appendChild(sq);
+    squares.push(sq);
+
+    // clic sur la case
+    sq.addEventListener('click', ()=>{
+      if(selected){
+        // tente de déplacer la pièce
+        if(isLegalMove(selected,sq)){
+          sq.innerText=selected.innerText;
+          selected.innerText='';
+        }
+        selected=null;
+      } else if(sq.innerText) {
+        selected = sq;
+      }
+    });
+  }
+}
+
+// règles minimales (exemple simplifié)
+function isLegalMove(from,to){
+  const piece = from.innerText;
+  const dx = to.dataset.x - from.dataset.x;
+  const dy = to.dataset.y - from.dataset.y;
+
+  if(piece==='♙'){ // pion blanc simple
+    if(dx==0 && dy==-1 && !to.innerText) return true;
+    if(Math.abs(dx)==1 && dy==-1 && to.innerText && to.innerText.match(/[♟♞♝♜♛♚]/)) return true;
+  }
+  if(piece==='♟'){ // pion noir simple
+    if(dx==0 && dy==1 && !to.innerText) return true;
+    if(Math.abs(dx)==1 && dy==1 && to.innerText && to.innerText.match(/[♙♘♗♖♕♔]/)) return true;
+  }
+  // autres pièces à compléter...
+  // ♘♞ cavalier, ♗♝ fou, ♖♜ tour, ♕♛ reine, ♔♚ roi
+  return false;
+}
 </script>
 </body>
 </html>
