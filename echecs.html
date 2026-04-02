@@ -1,35 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>i-dio - Échecs</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="lib/chessboard.css">
+<!-- Chessboard.js CSS -->
+<link rel="stylesheet" href="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.css">
 <style>
-#board { width: 90vw; max-width: 480px; margin:20px auto; }
-body { text-align:center; }
+#board{width:320px;margin:20px auto}
+a{display:block;margin:10px;color:#fff;text-decoration:none}
 </style>
 </head>
 <body>
 <h1>ÉCHECS</h1>
-<a href="index.html">← retour</a>
 <div id="board"></div>
+<a href="index.html">← retour</a>
 
-<script src="lib/chess.js"></script>
-<script src="lib/chessboard.js"></script>
-<script src="bg.js"></script> <!-- Background animé -->
+<!-- Librairies pour échiquier officiel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
+<script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.js"></script>
+
+<!-- Fond animé (pièces qui bougent) -->
+<script src="bg.js"></script>
 
 <script>
-// initialisation moteur d'échecs
-var game = new Chess();
+// Échiquier interactif complet
+var board, game = new Chess();
 
-// échiquier interactif
-var board = Chessboard('board', {
+function onDragStart(source, piece, position, orientation) {
+  if (game.game_over()) return false;
+  if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
+}
+
+function onDrop(source, target) {
+  var move = game.move({from: source, to: target, promotion: 'q'});
+  if (move === null) return 'snapback';
+}
+
+function onSnapEnd() {
+  board.position(game.fen());
+}
+
+board = Chessboard('board', {
   draggable: true,
   position: 'start',
-  onDrop: function(source, target) {
-    var move = game.move({from: source, to: target, promotion: 'q'});
-    if (move === null) return 'snapback'; // mouvement illégal
-  }
+  onDragStart: onDragStart,
+  onDrop: onDrop,
+  onSnapEnd: onSnapEnd
 });
 </script>
 </body>
