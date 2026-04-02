@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>i-dio - Échecs</title>
 <link rel="stylesheet" href="style.css">
-<!-- Chessboard.js CSS -->
 <link rel="stylesheet" href="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.css">
 <style>
-#board{width:320px;margin:20px auto}
+body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center}
+#board{width:90vw;max-width:400px;margin:20px auto} /* largeur responsive */
 a{display:block;margin:10px;color:#fff;text-decoration:none}
 </style>
 </head>
@@ -17,38 +17,33 @@ a{display:block;margin:10px;color:#fff;text-decoration:none}
 <div id="board"></div>
 <a href="index.html">← retour</a>
 
-<!-- Librairies pour échiquier officiel -->
+<!-- Librairies -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
 <script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard.min.js"></script>
 
-<!-- Fond animé (pièces qui bougent) -->
+<!-- Fond animé -->
 <script src="bg.js"></script>
 
 <script>
-// Échiquier interactif complet
-var board, game = new Chess();
-
-function onDragStart(source, piece, position, orientation) {
-  if (game.game_over()) return false;
-  if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-      (game.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
-}
-
-function onDrop(source, target) {
-  var move = game.move({from: source, to: target, promotion: 'q'});
-  if (move === null) return 'snapback';
-}
-
-function onSnapEnd() {
-  board.position(game.fen());
-}
-
-board = Chessboard('board', {
-  draggable: true,
-  position: 'start',
-  onDragStart: onDragStart,
-  onDrop: onDrop,
-  onSnapEnd: onSnapEnd
+// S'assurer que le DOM est chargé
+document.addEventListener('DOMContentLoaded', () => {
+  var game = new Chess();
+  var board = Chessboard('board', {
+    draggable: true,
+    position: 'start',
+    onDragStart: (source, piece) => {
+      if (game.game_over()) return false;
+      if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+          (game.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
+    },
+    onDrop: (source, target) => {
+      var move = game.move({from: source, to: target, promotion: 'q'});
+      if (move === null) return 'snapback';
+    },
+    onSnapEnd: () => {
+      board.position(game.fen());
+    }
+  });
 });
 </script>
 </body>
